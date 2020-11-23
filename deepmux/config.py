@@ -7,7 +7,7 @@ class _Config(object):
         self.args = None
         self.token = None
         self.home = os.getenv('HOME')
-        os.getenv('DEEPMUX_BASE_URL', 'https://api.deepmux.com/v1')
+        self.base_url = os.getenv('DEEPMUX_BASE_URL', 'https://api.deepmux.com/v1')
 
         self.deepmux_dir_path = os.path.join(self.home, '.deepmux')
         self.deepmux_token_path = os.path.join(self.deepmux_dir_path, 'token')
