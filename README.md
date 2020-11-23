@@ -15,17 +15,17 @@ We are going to use `pip` to install deepmux command line interface below. If yo
 
 Install `virtualenv` module if you don't have it already:
 
-```
+```bash
 pip3 install virtualenv
 ```
 
 Then create one:
-```
+```bash
 virtualenv venv
 ```
 
 And activate:
-```
+```bash
 source venv/bin/activate
 ```
 
@@ -34,7 +34,7 @@ source venv/bin/activate
 ### Install
 
 Use `pip` to install `deepmux-cli`:
-```
+```bash
 pip3 install deepmux-cli
 ```
 
@@ -43,13 +43,13 @@ pip3 install deepmux-cli
 Go to the [https://app.deepmux.com/api_key](https://app.deepmux.com/api_key) and copy your token.
 
 Than run:
-```
+```bash
 deepmux login
 ```
 And paste your token below.
 
 Run `--help` to see the full list of options:
-```
+```bash
 deepmux --help
 ``` 
 
