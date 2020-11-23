@@ -22,11 +22,11 @@ def parse_args():
     subparsers.add_parser("login", help="login")
 
     init_parser = subparsers.add_parser("init", help="init")
-    init_parser.add_argument("--name", help="function name", type=str)
-    init_parser.add_argument("--env", help="environment name e.g. python3.7-pytorch1.6", type=str)
+    init_parser.add_argument("--name", help="function name", type=str, required=True)
+    init_parser.add_argument("--env", help="environment name e.g. python3.7-pytorch1.6", type=str, required=True)
 
     upload_parser = subparsers.add_parser("upload", help="upload zip archive of the current directory")
-    upload_parser.add_argument("--name", help="function name", type=str)
+    upload_parser.add_argument("--name", help="function name", type=str, required=True)
 
     subparsers.add_parser("env", help="list available environments")
 
