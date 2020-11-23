@@ -54,5 +54,9 @@ class API(object):
             return json.loads(response.text)
         except FileNotFoundError as e:
             raise LoginRequired(repr(e))
+        except NotFound as e:
+            raise e
+        except NameConflict as e:
+            raise e
         except Exception as e:
             raise UnknownException(repr(e))
