@@ -1,4 +1,5 @@
 import os
+import sys
 import uuid
 import shutil
 import getpass
@@ -10,7 +11,7 @@ from deepmux.templates import python_function_basic
 from deepmux.errors import UnknownException
 
 
-def parse_args():
+def build_parser():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=f"\033[92mDeepMux\ncommand-line interface\x1b[0m",
@@ -32,7 +33,7 @@ def parse_args():
 
     subparsers.add_parser("list", help="list created functions")
 
-    return parser.parse_args()
+    return parser
 
 
 def login():
@@ -86,7 +87,8 @@ def list_():
 
 
 def main():
-    config.args = parse_args()
+    parser = build_parser()
+    config.args = parser.parse_args()
 
     if config.args.mode == 'login':
         login()
@@ -99,8 +101,9 @@ def main():
     if config.args.mode == 'list':
         list_()
     else:
-        config.args.print_help(sys.stderr)
+        parser.print_help(sys.stderr)
         sys.exit(1)
+
 
 if __name__ == '__main__':
     main()
