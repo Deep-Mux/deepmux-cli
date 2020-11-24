@@ -3,7 +3,7 @@ import json
 import requests
 
 from deepmux.config import config
-from deepmux.errors import UnknownException, LoginRequired, NotFound, NameConflict
+from deepmux.errors import UnknownException, NotFound, NameConflict
 
 
 class API(object):
@@ -29,6 +29,10 @@ class API(object):
     def list_(cls) -> dict:
         return cls._do_request(suffix='function', method='GET')
 
+    @classmethod
+    def delete(cls, name: str) -> dict:
+        return cls._do_request(suffix=f'function/{name}', method='PUT')
+
     @staticmethod
     def _raise_for_status(status_code, url):
         detail = f"url {url}"
@@ -52,8 +56,8 @@ class API(object):
                                         json=data, params=params, files=files)
             cls._raise_for_status(response.status_code, endpoint)
             return json.loads(response.text)
-        except FileNotFoundError as e:
-            raise LoginRequired(repr(e))
+        except FileNotFoundError:
+            print('please log in `deepmux login`')
         except NotFound as e:
             raise e
         except NameConflict as e:

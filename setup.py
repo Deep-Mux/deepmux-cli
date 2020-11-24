@@ -13,6 +13,7 @@ setuptools.setup(
     url="https://github.com/Deep-Mux/deepmux-cli",
     packages=setuptools.find_packages(),
     install_requires=[
+        'pyyaml',
         'requests',
     ],
     classifiers=[
