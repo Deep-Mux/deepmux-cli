@@ -19,13 +19,13 @@ def parse_args():
 
     subparsers = parser.add_subparsers(help="options", dest="mode")
 
-    subparsers.add_parser("login", help="login")
+    subparsers.add_parser("login", help="authorize cli to access deepmux the API")
 
-    init_parser = subparsers.add_parser("init", help="init")
+    init_parser = subparsers.add_parser("init", help="initialize a project in current directory")
     init_parser.add_argument("--name", help="function name", type=str, required=True)
-    init_parser.add_argument("--env", help="environment name e.g. python3.7-pytorch1.6", type=str, required=True)
+    init_parser.add_argument("--env", help="environment name e.g. python3.7", type=str, required=True)
 
-    upload_parser = subparsers.add_parser("upload", help="upload zip archive of the current directory")
+    upload_parser = subparsers.add_parser("upload", help="upload the project in current directory")
     upload_parser.add_argument("--name", help="function name", type=str, required=True)
 
     subparsers.add_parser("env", help="list available environments")
@@ -37,6 +37,7 @@ def parse_args():
 
 def login():
     os.system(f"mkdir -p {config.deepmux_dir_path}")
+    print("Get your token from https://app.deepmux.com/api_key")
     token = getpass.getpass('token: ', )
     with open(config.deepmux_token_path, 'w') as token_file:
         token_file.write(token)
@@ -47,7 +48,8 @@ def init(*, name: str, env_: str):
     API.init(name=name)
     with open('deepmux.yaml', 'w') as deepmux_yaml:
         deepmux_yaml.write(python_function_basic(name=name, env=env_))
-    print("please fill this yaml: ./deepmux.yaml")
+    print("./deepmux.yaml created.")
+    print("Fill it to get started.")
 
 
 def upload(*, name: str):
@@ -58,7 +60,7 @@ def upload(*, name: str):
         try:
             payload = project_zip_file.read()
         finally:
-            os.system(f"rm {zip_file_name}.zip")
+            os.unlink(f"{zip_file_name}.zip")
     API.upload(name=name, payload=payload)
     print('done')
 
@@ -96,7 +98,9 @@ def main():
         env()
     if config.args.mode == 'list':
         list_()
-
+    else:
+        config.args.print_help(sys.stderr)
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
