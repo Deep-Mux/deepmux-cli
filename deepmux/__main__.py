@@ -41,17 +41,17 @@ def main():
 
     if config.args.mode == 'login':
         login()
-    if config.args.mode == 'init':
+    elif config.args.mode == 'init':
         init()
-    if config.args.mode == 'upload':
+    elif config.args.mode == 'upload':
         upload()
-    if config.args.mode == 'env':
+    elif config.args.mode == 'env':
         env()
-    if config.args.mode == 'list':
+    elif config.args.mode == 'list':
         list_()
-    if config.args.mode == 'delete':
+    elif config.args.mode == 'delete':
         delete(name=config.args.name)
-    if config.args.mode == 'run':
+    elif config.args.mode == 'run':
         run(name=config.args.name, file=config.args.file, data=config.args.data)
     else:
         parser.print_help(sys.stderr)
