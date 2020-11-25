@@ -49,7 +49,7 @@ def main():
     if config.args.mode == 'list':
         list_()
     if config.args.mode == 'delete':
-        delete()
+        delete(name=config.args.name)
     else:
         parser.print_help(sys.stderr)
         sys.exit(1)

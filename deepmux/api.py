@@ -31,7 +31,7 @@ class API(object):
 
     @classmethod
     def delete(cls, name: str) -> dict:
-        return cls._do_request(suffix=f'function/{name}', method='PUT')
+        return cls._do_request(suffix=f'function/{name}', method='DELETE')
 
     @staticmethod
     def _raise_for_status(status_code, url):
