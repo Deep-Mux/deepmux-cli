@@ -1,8 +1,11 @@
 import os
+import yaml
 import uuid
 import shutil
 import typing
 import getpass
+
+from yaml.parser import ParserError
 
 from deepmux.config import config
 from deepmux.api import API
@@ -19,10 +22,9 @@ def login():
     print('done')
 
 
-def init(*, name: str, env_: str):
-    API.init(name=name)
+def init():
     with open('deepmux.yaml', 'w') as deepmux_yaml:
-        deepmux_yaml.write(python_function_basic(name=name, env=env_))
+        deepmux_yaml.write(python_function_basic)
     with open('.deepmuxignore', 'w') as deepmux_ignore:
         deepmux_ignore.write('.deepmuxignore\n')
         deepmux_ignore.write('deepmux.yaml\n')
@@ -41,7 +43,24 @@ def _load_ignore() -> typing.List[str]:
         return []
 
 
-def upload(*, name: str):
+def _parse_function_name() -> str:
+    with open('deepmux.yaml') as file:
+        deepmux_yaml = yaml.safe_load(file)
+        return deepmux_yaml['name']
+
+
+def upload():
+    try:
+        name = _parse_function_name()
+    except FileNotFoundError:
+        print('deepmux.yaml not found')
+        return
+    except ParserError:
+        print('failed to parse deepmux.yaml')
+        return
+
+    API.create(name=name)
+
     uid = str(uuid.uuid4())[:6]
     zip_file_name = f".{uid}_deepmux"
     copy_dir_name = f".{uid}_copy"
@@ -83,4 +102,18 @@ def delete(*, name: str):
     print(f'function {name} deleted')
 
 
-__all__ = ('env', 'list_', 'init', 'upload', 'login', 'delete')
+def run(*, name: str, data: str = None, file: str = None):
+    if file is not None:
+        try:
+            with open(file, 'r') as file:
+                print(API.run(name=name, data=file.read()))
+        except FileNotFoundError:
+            print('file not found')
+        return
+    if data is not None:
+        print(API.run(name=name, data=data))
+        return
+    print("please specify --data or --file argument")
+
+
+__all__ = ('env', 'list_', 'init', 'upload', 'login', 'delete', 'run')

@@ -2,7 +2,7 @@ import sys
 import argparse
 
 from deepmux.config import config
-from deepmux.cmd import env, list_, upload, login, init, delete
+from deepmux.cmd import env, list_, upload, login, init, delete, run
 
 
 def build_parser():
@@ -16,20 +16,21 @@ def build_parser():
 
     subparsers.add_parser("login", help="authorize cli to access deepmux the API")
 
-    init_parser = subparsers.add_parser("init", help="initialize a project in current directory")
+    subparsers.add_parser("init", help="initialize a project in current directory")
 
-    init_parser.add_argument("--name", help="function name", type=str, required=True)
-    init_parser.add_argument("--env", help="environment name e.g. python3.7", type=str, required=True)
-
-    upload_parser = subparsers.add_parser("upload", help="upload the project in current directory")
-    upload_parser.add_argument("--name", help="function name", type=str, required=True)
+    subparsers.add_parser("upload", help="upload the project in current directory")
 
     subparsers.add_parser("env", help="list available environments")
 
     subparsers.add_parser("list", help="list created functions")
 
     delete_parser = subparsers.add_parser("delete", help="delete function")
-    delete_parser.add_argument("--name", help="function name")
+    delete_parser.add_argument("--name", help="function name", type=str, required=True)
+
+    run_parser = subparsers.add_parser("run", help="run function")
+    run_parser.add_argument("--name", help="function name", type=str, required=True)
+    run_parser.add_argument("--file", help="data file", type=str)
+    run_parser.add_argument("--data", help="data", type=str)
 
     return parser
 
@@ -41,15 +42,17 @@ def main():
     if config.args.mode == 'login':
         login()
     if config.args.mode == 'init':
-        init(name=config.args.name, env_=config.args.env)
+        init()
     if config.args.mode == 'upload':
-        upload(name=config.args.name)
+        upload()
     if config.args.mode == 'env':
         env()
     if config.args.mode == 'list':
         list_()
     if config.args.mode == 'delete':
         delete(name=config.args.name)
+    if config.args.mode == 'run':
+        run(name=config.args.name, file=config.args.file, data=config.args.data)
     else:
         parser.print_help(sys.stderr)
         sys.exit(1)
