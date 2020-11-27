@@ -10,7 +10,7 @@ from yaml.parser import ParserError
 from deepmux.config import config
 from deepmux.api import API
 from deepmux.templates import python_function_basic
-from deepmux.errors import UnknownException
+from deepmux.errors import UnknownException, NotFound
 
 
 def login():
@@ -27,7 +27,6 @@ def init():
         deepmux_yaml.write(python_function_basic)
     with open('.deepmuxignore', 'w') as deepmux_ignore:
         deepmux_ignore.write('.deepmuxignore\n')
-        deepmux_ignore.write('deepmux.yaml\n')
 
     print("./deepmux.yaml created.")
     print("Fill it to get started.")
@@ -59,7 +58,10 @@ def upload():
         print('failed to parse deepmux.yaml')
         return
 
-    API.create(name=name)
+    try:
+        API.get_function(name=name)
+    except NotFound:
+        API.create(name=name)
 
     uid = str(uuid.uuid4())[:6]
     zip_file_name = f".{uid}_deepmux"
@@ -67,6 +69,7 @@ def upload():
     ignore = shutil.ignore_patterns(*_load_ignore())
     shutil.copytree('./', copy_dir_name, ignore=ignore)
     shutil.make_archive(zip_file_name, 'zip', copy_dir_name)
+
     with open(f"{zip_file_name}.zip", 'rb') as project_zip_file:
         try:
             payload = project_zip_file.read()

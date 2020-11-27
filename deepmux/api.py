@@ -19,6 +19,10 @@ class API(object):
         cls._do_request(suffix=f'function/{name}', method='PUT')
 
     @classmethod
+    def get_function(cls, *, name: str):
+        cls._do_request(suffix=f'function/{name}', method='GET')
+
+    @classmethod
     def upload(cls, *, name: str, payload: bytes):
         cls._do_request(suffix=f'function/{name}', method='POST', files={'repo': payload})
 
