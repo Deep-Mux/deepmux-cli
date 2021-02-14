@@ -2,6 +2,7 @@ import os
 import json
 import typing
 import requests
+from urllib.parse import urljoin
 
 from deepmux.config import config
 from deepmux.errors import UnknownException, NotFound, NameConflict
@@ -60,7 +61,7 @@ class API(object):
         headers = dict() if headers is None else {**headers}
         try:
             headers['x-token'] = cls._get_token()
-            endpoint = os.path.join(config.base_url, suffix)
+            endpoint = urljoin(config.base_url, suffix)
             response = requests.request(method, endpoint, headers=headers,
                                         data=data, params=params, files=files)
             cls._raise_for_status(response.status_code, endpoint)
