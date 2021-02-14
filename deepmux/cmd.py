@@ -70,12 +70,12 @@ def upload():
     shutil.copytree('./', copy_dir_name, ignore=ignore)
     shutil.make_archive(zip_file_name, 'zip', copy_dir_name)
 
-    with open(f"{zip_file_name}.zip", 'rb') as project_zip_file:
-        try:
+    try:
+        with open(f"{zip_file_name}.zip", 'rb') as project_zip_file:
             payload = project_zip_file.read()
-        finally:
-            os.unlink(f"{zip_file_name}.zip")
-            shutil.rmtree(copy_dir_name)
+    finally:
+        os.unlink(f"{zip_file_name}.zip")
+        shutil.rmtree(copy_dir_name)
     API.upload(name=name, payload=payload)
     print('done')
 
