@@ -11,16 +11,19 @@ from deepmux.config import config
 from deepmux.api import API
 from deepmux.templates import python_function_basic
 from deepmux.errors import UnknownException, NotFound
+from deepmux.util import ProgressReader
 
 
 def login(skip_if_logged: bool = False):
-    if not (skip_if_logged and os.path.exists(config.deepmux_token_path)):
-        os.system(f"mkdir -p {config.deepmux_dir_path}")
-        print("Get your token from https://app.deepmux.com/api_key")
-        token = getpass.getpass('token: ', )
-        with open(config.deepmux_token_path, 'w') as token_file:
-            token_file.write(token)
-        print('done')
+    if skip_if_logged and os.path.exists(config.deepmux_token_path):
+        return
+
+    os.system(f"mkdir -p {config.deepmux_dir_path}")
+    print("Get your token from https://app.deepmux.com/api_key")
+    token = input('token: ')
+    with open(config.deepmux_token_path, 'w') as token_file:
+        token_file.write(token)
+    print('done')
 
 
 def init():
@@ -31,8 +34,6 @@ def init():
 
     print("./deepmux.yaml created.")
     print("Fill it to get started.")
-    print("./.deepmuxignore created")
-    print("Write there a list of files and directories that shouldn't be uploaded e.g. venv")
 
 
 def _load_ignore() -> typing.List[str]:
@@ -72,12 +73,11 @@ def upload():
     shutil.make_archive(zip_file_name, 'zip', copy_dir_name)
 
     try:
-        with open(f"{zip_file_name}.zip", 'rb') as project_zip_file:
-            payload = project_zip_file.read()
+        API.upload(name=name, payload=ProgressReader(f"{zip_file_name}.zip"))
+
     finally:
         os.unlink(f"{zip_file_name}.zip")
         shutil.rmtree(copy_dir_name)
-    API.upload(name=name, payload=payload)
     print('done')
 
 
