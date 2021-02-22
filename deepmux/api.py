@@ -5,15 +5,21 @@ import requests
 from urllib.parse import urljoin
 
 from deepmux.config import config
-from deepmux.errors import UnknownException, NotFound, NameConflict
+from deepmux.errors import UnknownException, NotFound, NameConflict, LoginRequired
 
 
 class API(object):
 
     @staticmethod
     def _get_token() -> str:
-        with open(config.deepmux_token_path, 'r') as file:
-            return file.read()
+        try:
+            with open(config.deepmux_token_path, 'r') as file:
+                data = file.read()
+            if not data:
+                raise Exception
+        except Exception:
+            raise LoginRequired("You have to log in. Use \"deepmux login\"")
+        return data
 
     @classmethod
     def create(cls, *, name: str):
@@ -44,8 +50,9 @@ class API(object):
         return cls._do_request(suffix=f"function/{name}/run", method='POST', data=data)
 
     @staticmethod
-    def _raise_for_status(status_code, url):
-        detail = f"url {url}"
+    def _raise_for_status(response, method, url):
+        detail = f'Request: {method} {url}'
+        status_code = response.status_code
         if status_code == 404:
             raise NotFound(detail)
         elif status_code == 409:
@@ -53,7 +60,9 @@ class API(object):
         elif status_code == 200:
             ...
         else:
-            raise UnknownException(detail)
+            raise UnknownException(f'HTTP response code: {response.status_code}\n'
+                                   f'Response message: {response.text}\n'
+                                   f'{detail}')
 
     @classmethod
     def _do_request(cls, *, suffix: str, method: str, headers: dict = None,
@@ -64,16 +73,16 @@ class API(object):
             endpoint = urljoin(config.base_url, suffix)
             response = requests.request(method, endpoint, headers=headers,
                                         data=data, params=params, files=files)
-            cls._raise_for_status(response.status_code, endpoint)
+            cls._raise_for_status(response, method, endpoint)
             try:
                 return json.loads(response.text)
             except json.JSONDecodeError:
                 return response.text
-        except FileNotFoundError:
-            print('please log in `deepmux login`')
         except NotFound as e:
             raise e
         except NameConflict as e:
+            raise e
+        except LoginRequired as e:
             raise e
         except Exception as e:
             raise UnknownException(repr(e))

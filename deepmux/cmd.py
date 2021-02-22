@@ -13,13 +13,14 @@ from deepmux.templates import python_function_basic
 from deepmux.errors import UnknownException, NotFound
 
 
-def login():
-    os.system(f"mkdir -p {config.deepmux_dir_path}")
-    print("Get your token from https://app.deepmux.com/api_key")
-    token = getpass.getpass('token: ', )
-    with open(config.deepmux_token_path, 'w') as token_file:
-        token_file.write(token)
-    print('done')
+def login(skip_if_logged: bool = False):
+    if not (skip_if_logged and os.path.exists(config.deepmux_token_path)):
+        os.system(f"mkdir -p {config.deepmux_dir_path}")
+        print("Get your token from https://app.deepmux.com/api_key")
+        token = getpass.getpass('token: ', )
+        with open(config.deepmux_token_path, 'w') as token_file:
+            token_file.write(token)
+        print('done')
 
 
 def init():
