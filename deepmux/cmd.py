@@ -11,7 +11,6 @@ from deepmux.config import config
 from deepmux.api import API
 from deepmux.templates import python_function_basic
 from deepmux.errors import UnknownException, NotFound
-from deepmux.util import ProgressReader
 
 
 def login(skip_if_logged: bool = False):
@@ -74,7 +73,8 @@ def upload():
         shutil.copytree('./', copy_dir_name, ignore=ignore)
         shutil.make_archive(zip_file_name, 'zip', copy_dir_name)
         print('Uploading function data...')
-        API.upload(name=name, payload=ProgressReader(f"{zip_file_name}.zip"))
+        with open(f"{zip_file_name}.zip", 'rb') as f:
+            API.upload(name=name, payload=f)
     finally:
         try:
             os.unlink(f"{zip_file_name}.zip")

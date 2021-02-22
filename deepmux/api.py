@@ -3,7 +3,6 @@ import typing
 import requests
 from urllib.parse import urljoin
 
-from deepmux import util
 from deepmux.config import config
 from deepmux.errors import UnknownException, NotFound, NameConflict, LoginRequired
 
@@ -30,7 +29,7 @@ class API(object):
         cls._do_request(suffix=f'function/{name}', method='GET')
 
     @classmethod
-    def upload(cls, *, name: str, payload: util.ProgressReader):
+    def upload(cls, *, name: str, payload: typing.IO):
         cls._do_request(suffix=f'function/{name}', method='POST', files={'repo': payload})
 
     @classmethod
