@@ -70,16 +70,17 @@ def upload():
     zip_file_name = f".{uid}_deepmux"
     copy_dir_name = f".{uid}_copy"
     ignore = shutil.ignore_patterns(*_load_ignore())
-    shutil.copytree('./', copy_dir_name, ignore=ignore)
-    shutil.make_archive(zip_file_name, 'zip', copy_dir_name)
-
     try:
+        shutil.copytree('./', copy_dir_name, ignore=ignore)
+        shutil.make_archive(zip_file_name, 'zip', copy_dir_name)
         print('Uploading function data...')
         API.upload(name=name, payload=ProgressReader(f"{zip_file_name}.zip"))
-
     finally:
-        os.unlink(f"{zip_file_name}.zip")
-        shutil.rmtree(copy_dir_name)
+        try:
+            os.unlink(f"{zip_file_name}.zip")
+        except OSError:
+            pass
+        shutil.rmtree(copy_dir_name, ignore_errors=True)
     print('done')
 
 

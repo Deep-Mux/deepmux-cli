@@ -2,12 +2,14 @@ import os
 
 import tqdm
 
+from io import BytesIO
+
 
 class ProgressReader:
-
     def __init__(self, filename):
         self.filename = filename
         self.total_size = os.path.getsize(filename)
+        self.iter = iter(self)
 
     def __iter__(self):
         chunk_size = 1 << 20
@@ -25,6 +27,9 @@ class ProgressReader:
                     yield data
         finally:
             pbar.close()
+
+    def read(self):
+        return next(self.iter)
 
     def __len__(self):
         return self.total_size
