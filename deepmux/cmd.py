@@ -54,7 +54,7 @@ def upload():
     try:
         name = _parse_function_name()
     except FileNotFoundError:
-        print('deepmux.yaml not found')
+        print('deepmux.yaml not found. Please initialize the project with \'deepmux init\'')
         return
     except ParserError:
         print('failed to parse deepmux.yaml')
@@ -63,8 +63,9 @@ def upload():
     try:
         API.get_function(name=name)
     except NotFound:
+        print('Creating function...')
         API.create(name=name)
-
+    print('Compressing function data...')
     uid = str(uuid.uuid4())[:6]
     zip_file_name = f".{uid}_deepmux"
     copy_dir_name = f".{uid}_copy"
@@ -73,6 +74,7 @@ def upload():
     shutil.make_archive(zip_file_name, 'zip', copy_dir_name)
 
     try:
+        print('Uploading function data...')
         API.upload(name=name, payload=ProgressReader(f"{zip_file_name}.zip"))
 
     finally:

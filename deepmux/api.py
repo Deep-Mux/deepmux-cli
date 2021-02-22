@@ -1,4 +1,3 @@
-import os
 import json
 import typing
 import requests
@@ -19,7 +18,7 @@ class API(object):
             if not data:
                 raise Exception
         except Exception:
-            raise LoginRequired("You have to log in. Use \"deepmux login\"")
+            raise LoginRequired("Please log in first. Use \"deepmux login\"")
         return data
 
     @classmethod
