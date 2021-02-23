@@ -15,7 +15,6 @@ setuptools.setup(
     install_requires=[
         'pyyaml',
         'requests',
-        'tqdm'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
