@@ -15,7 +15,8 @@ def build_parser():
     subparsers = parser.add_subparsers(help="options", dest="mode")
 
     login_parser = subparsers.add_parser("login", help="authorize cli to access deepmux the API")
-    login_parser.add_argument("--skip-if-logged", help="skip login prompt if key can be found")
+    login_parser.add_argument("--skip-if-logged", dest="login_skip", action="store_true",
+                              help="skip login prompt if key can be found")
 
     subparsers.add_parser("init", help="initialize a project in current directory")
 
@@ -41,7 +42,7 @@ def main():
     config.args = parser.parse_args()
 
     if config.args.mode == 'login':
-        login(skip_if_logged='skip_if_logged' in config.args)
+        login(skip_if_logged=config.args.login_skip)
     elif config.args.mode == 'init':
         init()
     elif config.args.mode == 'upload':
