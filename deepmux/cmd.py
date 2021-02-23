@@ -114,14 +114,13 @@ def run(*, name: str, data: str = None, file: str = None):
     if file is not None:
         try:
             with open(file, 'r') as file:
-                print(API.run(name=name, data=file.read()))
+                data = file.read()
         except FileNotFoundError:
             print('file not found')
-        return
     if data is not None:
-        sys.stdout.write(API.run(name=name, data=data))
-        return
-    print("please specify --data or --file argument")
+        sys.stdout.buffer.write(API.run(name=name, data=data))
+    else:
+        print("please specify --data or --file argument")
 
 
 __all__ = ('env', 'list_', 'init', 'upload', 'login', 'delete', 'run')
