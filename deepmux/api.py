@@ -46,7 +46,7 @@ class API(object):
 
     @classmethod
     def run(cls, name: str, data: str):
-        return cls._do_request(suffix=f"function/{name}/run", method='POST', data=data)
+        return cls._do_request(suffix=f"function/{name}/run", method='POST', data=data, binary=True)
 
     @staticmethod
     def _raise_for_status(response, method, url):
@@ -65,7 +65,7 @@ class API(object):
 
     @classmethod
     def _do_request(cls, *, suffix: str, method: str, headers: dict = None,
-                    data: str = None, params: dict = None, files: dict = None) -> typing.Union[dict, str]:
+                    data: str = None, params: dict = None, files: dict = None, binary: bool = False) -> typing.Union[dict, str]:
         headers = dict() if headers is None else {**headers}
         try:
             headers['x-token'] = cls._get_token()
@@ -73,6 +73,8 @@ class API(object):
             response = requests.request(method, endpoint, headers=headers,
                                         data=data, params=params, files=files)
             cls._raise_for_status(response, method, endpoint)
+            if binary:
+                return response.content
             try:
                 return json.loads(response.text)
             except json.JSONDecodeError:

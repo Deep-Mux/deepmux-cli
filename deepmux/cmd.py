@@ -1,4 +1,5 @@
 import os
+import sys
 import yaml
 import uuid
 import shutil
@@ -118,7 +119,7 @@ def run(*, name: str, data: str = None, file: str = None):
             print('file not found')
         return
     if data is not None:
-        print(API.run(name=name, data=data))
+        sys.stdout.write(API.run(name=name, data=data))
         return
     print("please specify --data or --file argument")
 
